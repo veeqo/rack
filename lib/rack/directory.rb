@@ -78,13 +78,14 @@ table { width:100%%; }
 
     def list_directory
       @files = [['../','Parent Directory','','','']]
-      glob = F.join(@path, '*')
 
       url_head = (@script_name.split('/') + @path_info.split('/')).map do |part|
         Rack::Utils.escape part
       end
 
-      Dir[glob].sort.each do |node|
+      nodes = Dir.entries(path).reject { |e| e.start_with?('.') }.sort.map { |f| F.expand_path(f, path)}
+
+      nodes.each do |node|
         stat = stat(node)
         next  unless stat
         basename = F.basename(node)
